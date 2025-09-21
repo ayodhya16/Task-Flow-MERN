@@ -1,14 +1,28 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Settings, User, Zap } from 'lucide-react';
+import { ChevronDown, LogOut, Settings, User, Zap } from 'lucide-react';
 import { useRef } from 'react';
 
-const Navbar = () => {
+const Navbar = ({user = {}, onLogout }) => {
     const menuref = useRef(null);
     const[menuOpen, setMenuOpen] = React.useState(false);
     const navigate = useNavigate();
 
     const handleMenuToggle = () => setMenuOpen((prev) => !prev);
+    const handleLogout = () => {
+        setMenuOpen(false);
+        if (onLogout) onLogout();
+    };
+    // Close menu on outside click
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (menuref.current && !menuref.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
     return (
         <header className=' sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm
         border-b border-gray-200 font-sans'>
@@ -44,17 +58,52 @@ const Navbar = () => {
                             <div className='relative'>
                                 {User.avatar ? (
                                     <img
-                                        src={User.avatar}
+                                        src={user.avatar}
                                         alt="Avatar"
                                         className='w-9 h-9 rounded-full shadow-sm'
                                     />
                                 ) : (
                                     <div className='w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 via-purple-600 to-indigo-500 text-white font-semibold shadow-md'>
-                                        {User.name?.[0]?.toUpperCase() || 'U'}
+                                        {user.name?.[0]?.toUpperCase() || 'U'}
                                     </div>
                                 )}
+                                <div className=' absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400
+                                rounded-full border-2 border-white animate-pulse'>
+                                </div>
                             </div>
+                            <div className=' text-left hidden md:block'>
+                                <p className=' text-xs text-gray-500 font-normal'>{user.name}</p>
+                                <p className=' text-xs text-gray-500 font-normal'>{user.email}</p>
+                            </div>
+                            <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-300 ${menuOpen ? "rotate-180" : "rotate-0"}`} />
                         </button>
+
+                        {menuOpen && (
+                            <ul className=' absolute top-12 right-0 w-56 bg-white rounded-2xl
+                            shadow-xl border border-purple-100 z-50 overflow-hidden animate-fadeIn'>
+                                <li className=' p-2'>
+                                    <button 
+                                        onClick={() => {
+                                            setMenuOpen(false);
+                                            navigate('/profile');
+                                        }}
+                                        className='w-full px-4 py-2.5 text-left hover:bg-purple-50 text-sm
+                                         text-gray-700 transition-colors flex items-center gap-2 group' role='menuitem'>
+                                            <Settings className=' w-5 h-5 text-gray-700' />
+                                            Profile Settings
+                                    </button>
+                                </li> 
+
+                                <li className=' p-2'>
+                                    <button onClick={handleLogout} className='w-full
+                                        items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-red-50 text-red-600' >
+                                            <LogOut className=' w-4 h-4 '/> 
+                                            Logout
+                                    </button>
+
+                                </li>
+                            </ul>
+                        )}
                     </div>
                 </div>
             </div>
