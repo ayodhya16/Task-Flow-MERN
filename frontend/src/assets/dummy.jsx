@@ -289,4 +289,4 @@ export const TI_CLASSES = {
 const user = {
       avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name || 'User')}&background=random`
     };
-
+    

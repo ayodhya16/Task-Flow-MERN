@@ -1,9 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config'
-import { connect } from 'mongoose';
 import { connectDB } from './config/db.js';
-import userRouter from './routes/userroute.js';
+import userRouter from './routes/userRoute.js';
 import taskRouter from './routes/taskRoute.js';
 
 const app = express();
